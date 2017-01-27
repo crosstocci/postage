@@ -37,6 +37,13 @@ int mkpath(char *file_path) {
 #pragma comment(lib, "Shlwapi.lib")
 #endif
 
+#if defined(__CYGWIN__) || defined(__MINGW32__)
+#define realpath realpath_bsd
+
+char *realpath(const char *path, char *resolved);
+ #endif
+
+
 // ############ EXTERNAL FUNCTION DEFINITIONS ####################
 
 char *canonical(const char *file_base, char *_path, char *check_type) {
@@ -115,6 +122,8 @@ char *canonical(const char *file_base, char *_path, char *check_type) {
 	errno = 0;
 	SERROR_SALLOC(canonical_filename, PATH_MAX);
 	char *realpath_res = realpath(str, canonical_filename);
+	SDEBUG("str: %s", str);
+	SDEBUG("canonical_filename: %s", canonical_filename);
 	SWARN_CHECK((errno == 0 && realpath_res != NULL) || errno == 2, "realpath failed: %d (%s)", errno, strerror(errno));
 
 	errno = 0;

@@ -1,3 +1,4 @@
+#define UTIL_DEBUG
 #include "db_framework.h"
 
 const char *const WONT_GUESS = "____GS_YOU_WONT_GUESS_THIS_DATA_JHDFKSHDFURIHKSDJFHUIRSDJHF____";
@@ -40,7 +41,7 @@ DB_conn *DB_connect(EV_P, void *cb_data, char *str_connstring, char *str_user,
 	SDEFINE_VAR_ALL(str_conn, str_escape_username, str_escape_password);
 
 	SFINISH_SALLOC(conn, sizeof(DB_conn));
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	conn->int_sock = -1;
 #endif
 
@@ -632,7 +633,7 @@ error:
 }
 
 void _DB_finish(DB_conn *conn) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	if (conn->int_sock != -1) {
 		_close(conn->int_sock);
 		conn->int_sock = -1;
@@ -661,6 +662,7 @@ void _DB_finish(DB_conn *conn) {
 }
 
 static void db_query_cb(EV_P, ev_io *w, int revents) {
+	SDEBUG("db_query_cb");
 	if (revents != 0) {
 	} // get rid of unused parameter warning
 	DB_copy_check *db_copy_check = NULL;
@@ -681,6 +683,7 @@ static void db_query_cb(EV_P, ev_io *w, int revents) {
 	SDEFINE_VAR_ALL(str_error);
 
 	int_status = PQconsumeInput(conn->conn);
+	SDEBUG("int_status: %d", int_status);
 	if (int_status != 1) {
 		SERROR_NORESPONSE("PQconsumeInput failed %s", PQerrorMessage(conn->conn));
 		conn->res_poll = NULL;
@@ -691,6 +694,7 @@ static void db_query_cb(EV_P, ev_io *w, int revents) {
 	}
 
 	int_status2 = PQisBusy(conn->conn);
+	SDEBUG("int_status2: %d", int_status2);
 
 	if (int_status2 != 1) {
 		arr_res = DArray_create(1, sizeof(PGresult *));

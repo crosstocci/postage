@@ -16,7 +16,8 @@ LDFLAGS = @LDFLAGS@
 CPPFLAGS = @CPPFLAGS@
 BUILD_DEPS = @BUILD_DEPS@
 
-common_SOURCES = $(wildcard ../common/*.c) $(filter-out ../util/util_getopt.c, $(filter-out ../util/util_strptime.c, $(filter-out ../util/util_exec.c, $(wildcard ../util/*.c))))
+common_SOURCES = @MAYBE_REALPATH@ $(wildcard ../common/*.c) $(filter-out ../util/util_getopt.c, $(filter-out ../util/util_strptime.c, $(filter-out ../util/util_exec.c, $(filter-out ../util/realpath_bsd.c, $(wildcard ../util/*.c)))))
+
 db_framework_pq_SOURCES = $(wildcard ../db_framework_pq/*.c)
 
 postage_SOURCES = $(common_SOURCES) $(db_framework_pq_SOURCES) $(wildcard *.c)
@@ -129,7 +130,7 @@ test-common:
 	{ postgres -D data_test -p 5431 2> output.txt > output.txt & }; \
 	echo $$! > postgres.pid; \
 	sleep 3
-	psql -U postgres -h 127.0.0.1 -p 5431 postgres -1f test.sql
+	psql -U postgres -h 127.0.0.1 -p 5431 -d postgres -1 -f test.sql
 	kill `cat postgres.pid`; rm postgres.pid; sleep 3
 	cp data_test/pg_hba.conf data_test/pg_hba.bak
 	sed -e '/trust/s/32            trust/32            md5/g' < data_test/pg_hba.bak > data_test/pg_hba.conf

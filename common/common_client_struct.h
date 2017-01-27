@@ -20,7 +20,7 @@ struct sock_ev_client_query_callback_watcher {
 
 #define cnxn conn->conn
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #undef close
 #define close _close
 #else
@@ -225,9 +225,6 @@ struct sock_ev_client_copy_io {
 	struct sock_ev_client_copy_check *client_copy_check;
 };
 
-#ifdef _WIN32
-#else
 #ifdef UNDEF_SOCKET
 #undef SOCKET
-#endif
 #endif

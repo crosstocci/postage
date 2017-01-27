@@ -126,13 +126,13 @@ need it without too much duplicate code
 #define CLIENT_READ(C, V, L) (bol_tls ? tls_read(C->tls_postage_io_context, V, L) : (ssize_t)read((int)C->_int_sock, V, L))
 #define CLIENT_WRITE(C, V, L) (bol_tls ? tls_write(C->tls_postage_io_context, V, L) : (ssize_t)write((int)C->_int_sock, V, L))
 
-#ifdef _WIN32
-// Windows won't let us do it though...
+/*
+The macro belo makes it easier to debug the socket_is_open function
+*/
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
+// MSVC won't let us do it though...
 #define socket_is_open _socket_is_open
 #else
-/*
-This macro makes it easier to debug the socket_is_open function
-*/
 #define socket_is_open(S)                                                                                                        \
 	({                                                                                                                           \
 		SDEBUG("Checking if socket %d is open", S);                                                                              \
@@ -144,7 +144,7 @@ This function checks to see if the given socket is still open
 */
 bool _socket_is_open(SOCKET int_sock);
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 // Windows won't let us do it though...
 #define close_client_if_needed _close_client_if_needed
 #else

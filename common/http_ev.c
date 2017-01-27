@@ -1,6 +1,6 @@
 #include "http_ev.h"
 
-#ifndef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #else
 #ifndef EV_SELECT_IS_WINSOCKET
 #define EV_SELECT_IS_WINSOCKET 1
@@ -47,7 +47,7 @@ struct ev_global_loop {
 #undef VAR
 };
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 void my_invalid_parameter(
 	const wchar_t *expression, const wchar_t *function, const wchar_t *file, unsigned int line, uintptr_t pReserved) {
 }
@@ -159,14 +159,14 @@ void http_ev_step1(struct sock_ev_client *client) {
 		pendingpri -= 1;
 	}
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	_invalid_parameter_handler oldHandler = _set_invalid_parameter_handler(my_invalid_parameter);
 #endif
 	ssize_t int_i = _loop->anfdmax;
 	while (int_i >= 0 && (bol_kill == false || bol_killed == false)) {
 		ANFD *anfd = &_loop->anfds[int_i];
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 		unsigned long arg = 0;
 		if (ioctlsocket(anfd->handle, FIONREAD, &arg) != 0) {
 			int_i -= 1;
@@ -228,7 +228,7 @@ void http_ev_step1(struct sock_ev_client *client) {
 		}
 		int_i -= 1;
 	}
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	_set_invalid_parameter_handler(oldHandler);
 #endif
 

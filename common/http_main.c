@@ -261,6 +261,10 @@ void http_main(struct sock_ev_client *client) {
 		client_auth->parent = client;
 
 		str_response = http_auth(client_auth);
+#ifdef UTIL_DEBUG
+	} else if (strncmp(str_uri, "/postage/app/action_ev", 23) == 0) {
+		http_ev_step1(client);
+#endif
 	} else if (strncmp(str_uri, "/postage", 8) == 0 && isdigit(str_uri[9])) {
 		// set_cnxn does its own error handling
 		SDEBUG("str_uri: %s", str_uri);

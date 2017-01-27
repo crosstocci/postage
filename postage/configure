@@ -38,7 +38,7 @@ MANDIR="share\/man"
 printf "checking for platform..."
 if test $(uname -s) = "Linux"; then
 	LDFLAGS="-lpq -lm -lrt"
-	CPPFLAGS="-D_GNU_SOURCE"
+	CPPFLAGS="-D_GNU_SOURCE -O3"
 	echo "Linux"
 
 	# On linux it is easy to check for libressl
@@ -49,16 +49,17 @@ if test $(uname -s) = "Linux"; then
 	echo $libressl
 elif test $(uname -s) = "Darwin"; then
 	LDFLAGS="-L\/usr\/local\/lib -lpq -lm -L\/usr\/local\/opt\/gettext\/lib"
-	CPPFLAGS="-I\/usr\/local\/opt\/gettext\/include"
+	CPPFLAGS="-I\/usr\/local\/opt\/gettext\/include -O3"
 	echo "Darwin"
 elif test $(uname -s) = "FreeBSD"; then
 	LDFLAGS="-lpq -lm -lintl"
+	CPPFLAGS="-O3"
 	MAKE=gmake
 	MANDIR="man"
 	echo "FreeBSD"
 elif test $(uname -s) = "OpenBSD"; then
 	LDFLAGS="-lpq -lm -lintl"
-	CPPFLAGS=""
+	CPPFLAGS="-O3"
 	MAKE=gmake
 	MANDIR="man"
 	echo "OpenBSD"
@@ -82,6 +83,11 @@ elif test $(uname -s) = "OpenBSD"; then
 	printf "checking for LibreSSL..."
 	libressl="yes"
 	echo $libressl
+elif test $(uname -s | grep MSYS | wc -l) = "1"; then
+	LDFLAGS="-lpq -lm -fstack-protector-all"
+	CPPFLAGS="-DMINGW -D_GNU_SOURCE -O2"
+	MAYBE_REALPATH="..\\/util\\/realpath_bsd.c"
+	echo "MSYS"
 else
 	LDFLAGS="-lpq -lm"
 	echo "Unknown"
@@ -297,6 +303,7 @@ sed -e "s/@sock_dir_parameter@/$directory_parameter/g" \
 	-e "s/@libev_CPPFLAGS@/$libev_CPPFLAGS/g" \
 	-e "s/@libtre_CPPFLAGS@/$libtre_CPPFLAGS/g" \
 	-e "s/@INSTALL_DEPS@/$INSTALL_DEPS/g" \
+	-e "s/@MAYBE_REALPATH@/$MAYBE_REALPATH/g" \
 	-e "s/@make@/$MAKE/g" < Makefile.in > Makefile
 
 #### CONFIGURE MAN PAGE

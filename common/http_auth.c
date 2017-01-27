@@ -1,3 +1,4 @@
+#define UTIL_DEBUG
 #include "http_auth.h"
 
 // response with redirect
@@ -802,8 +803,8 @@ void http_auth_login_step2(EV_P, void *cb_data, DB_conn *conn) {
 finish:
 	SFREE(conn->str_response);
 	ssize_t int_len = 0;
+	SDEBUG("str_response: %s", str_response);
 	if (bol_error_state == true) {
-		SDEBUG("str_response: %s", str_response);
 		char *_str_response = str_response;
 		char str_length[50];
 		snprintf(str_length, 50, "%zu", (int_response_len != 0 ? int_response_len : strlen(_str_response)));

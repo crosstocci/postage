@@ -313,4 +313,3 @@ select_destroy (EV_P)
   ev_free (vec_eo);
   #endif
 }
-

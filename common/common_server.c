@@ -6,7 +6,7 @@ struct sock_ev_serv _server;
 
 // set a socket to not blocking
 int setnonblock(SOCKET int_sock) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	u_long mode = 1;
 	return ioctlsocket(int_sock, FIONBIO, &mode);
 #else
@@ -107,7 +107,7 @@ void server_cb(EV_P, ev_io *w, int revents) {
 			SDEBUG("client->tls_postage_io_context: %p", client->tls_postage_io_context);
 		}
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 		// HANDLE h_dup_handle = 0;
 		// SERROR_CHECK(DuplicateHandle(GetCurrentProcess(), client->_int_sock,
 		// GetCurrentProcess(), &h_dup_handle, 0, FALSE,

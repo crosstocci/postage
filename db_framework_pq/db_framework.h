@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #include <windows.h>
 #include <winsock2.h>
 #endif
@@ -38,7 +38,7 @@ typedef struct DB_conn {
 
 	int int_sock;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #define GET_CONN_PQ_SOCKET(A) A->int_sock
 #define SERROR_SET_CONN_PQ_SOCKET(A)                                                                                             \
 	HANDLE h_dup_handle = 0;                                                                                                     \

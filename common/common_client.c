@@ -1572,7 +1572,7 @@ bool _socket_is_open(SOCKET int_sock) {
 	errno = 0;
 	int_len = sizeof(int_error);
 	int int_status = getsockopt((int)int_sock, SOL_SOCKET, SO_ERROR, &int_error, &int_len);
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	if (int_status == SOCKET_ERROR) {
 		SWARN("getsockopt failed: %d", WSAGetLastError());
 	}

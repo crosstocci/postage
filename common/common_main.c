@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -15,12 +15,12 @@
 #include <openssl/crypto.h>
 #include <stdio.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #include <direct.h>
 #include <stdlib.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #pragma comment(lib, "Ws2_32.lib")
 #ifdef _WIN64
 #pragma comment(lib, "../lib/x64/libpq.lib")
@@ -97,8 +97,8 @@ void program_exit() {
 		SFREE(str_global_log_level);
 		SFREE(str_global_public_username);
 		SFREE(str_global_public_password);
-#ifdef _WIN32
 
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 		SFREE(POSTAGE_PREFIX);
 #endif
 
@@ -120,13 +120,15 @@ void program_exit() {
 		ev_loop_destroy(global_loop);
 		global_loop = NULL;
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 		WSACleanup();
 #else
 		close(int_sock);
 #endif
 	}
 	DB_finish_framework();
+	// This is because we go back into the libev loop after returning
+	exit(0);
 }
 
 /*
@@ -243,7 +245,7 @@ int main(int argc, char *const *argv) {
 #ifdef UTIL_DEBUG
 	memset(&print_watchers, 0, sizeof(ev_signal));
 #endif // UTIL_DEBUG
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	WORD w_version_requested;
 	WSADATA wsa_data;
 	int err;
@@ -255,7 +257,7 @@ int main(int argc, char *const *argv) {
 		return 1;
 	}
 #endif
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	SERROR_CHECK(_getcwd(cwd, sizeof(cwd)) != NULL, "getcwd failed");
 #else
 	SERROR_CHECK(getcwd(cwd, sizeof(cwd)) != NULL, "getcwd failed");
@@ -286,7 +288,7 @@ int main(int argc, char *const *argv) {
 
 	memset(&_server, 0, sizeof(_server));
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #else
 	// clear sigpipe handler
 	signal(SIGPIPE, SIG_IGN);
@@ -403,7 +405,7 @@ int main(int argc, char *const *argv) {
 	}
 
 // Add callback for readable data
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 	int fd = _open_osfhandle(int_sock, 0);
 	ev_io_init(&_server.io, server_cb, fd, EV_READ);
 #else

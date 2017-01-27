@@ -18,7 +18,7 @@
 #include <tls.h>
 #include <unistd.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #else
 #define SOCKET int
 #define INVALID_SOCKET -1

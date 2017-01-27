@@ -57,7 +57,7 @@ void http_file_step1(struct sock_ev_client *client) {
 		str_temp = strchr(str_uri_temp + 9, '/');
 		SFINISH_CHECK(str_temp != NULL, "strchr failed");
 		SFINISH_SNCAT(
-			client_http_file->str_uri, &client_http_file->int_uri_len, 
+			client_http_file->str_uri, &client_http_file->int_uri_len,
 			"/postage/app", (size_t)12,
 			str_temp, client_http_file->int_uri_len - (size_t)(str_temp - str_uri_temp)
 		);
@@ -120,7 +120,7 @@ void http_file_step1(struct sock_ev_client *client) {
 		str_canonical_start = canonical_full_start("/app/");
 		SFINISH_CHECK(str_canonical_start != NULL, "canonical_full_start failed");
 		SFINISH_SNCAT(
-			client_http_file->str_uri_part, &client_http_file->int_uri_part_len, 
+			client_http_file->str_uri_part, &client_http_file->int_uri_part_len,
 			str_uri_temp + 9, client_http_file->int_uri_part_len - 9
 		);
 
@@ -128,7 +128,7 @@ void http_file_step1(struct sock_ev_client *client) {
 		str_canonical_start = canonical_full_start("/role/");
 		SFINISH_CHECK(str_canonical_start != NULL, "canonical_full_start failed");
 		SFINISH_SNCAT(
-			client_http_file->str_uri_part, &client_http_file->int_uri_part_len, 
+			client_http_file->str_uri_part, &client_http_file->int_uri_part_len,
 			str_uri_temp + 10, client_http_file->int_uri_part_len - 10
 		);
 
@@ -136,7 +136,7 @@ void http_file_step1(struct sock_ev_client *client) {
 		str_canonical_start = canonical_full_start("/web_root/");
 		SFINISH_CHECK(str_canonical_start != NULL, "canonical_full_start failed");
 		SFINISH_SNCAT(
-			client_http_file->str_uri_part, &client_http_file->int_uri_part_len, 
+			client_http_file->str_uri_part, &client_http_file->int_uri_part_len,
 			str_uri_temp + 5, client_http_file->int_uri_part_len - 5
 		);
 
@@ -144,7 +144,7 @@ void http_file_step1(struct sock_ev_client *client) {
 		str_canonical_start = canonical_full_start("/web_root/");
 		SFINISH_CHECK(str_canonical_start != NULL, "canonical_full_start failed");
 		SFINISH_SNCAT(
-			client_http_file->str_uri_part, &client_http_file->int_uri_part_len, 
+			client_http_file->str_uri_part, &client_http_file->int_uri_part_len,
 			str_uri_temp, client_http_file->int_uri_part_len
 		);
 	}
@@ -366,7 +366,7 @@ void http_file_step2(EV_P, ev_check *w, int revents) {
 
 	SERROR_SALLOC(str_etag, 100);
 #ifdef st_mtime
-#ifdef __linux__
+#if defined(__linux__) || defined(__CYGWIN__) || defined(__MINGW32__)
 	sprintf(str_etag, "%li.%li", statdata->st_ctim.tv_sec, statdata->st_ctim.tv_nsec);
 #else
 	sprintf(str_etag, "%li.%li", statdata->st_mtimespec.tv_sec, statdata->st_mtimespec.tv_nsec);
@@ -428,7 +428,7 @@ void http_file_step2(EV_P, ev_check *w, int revents) {
 		char *str_temp4 = "Server: " SUN_PROGRAM_LOWER_NAME "\015\012Content-Length: ";
 		SERROR_SNFCAT(
 			client->str_response, &client_http_file->int_response_len,
-			str_temp4, strlen(str_temp4), 
+			str_temp4, strlen(str_temp4),
 			str_length, strlen(str_length),
 			"\015\012Content-Type:", (size_t)15,
 			str_content_type, strlen(str_content_type),
